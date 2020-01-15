@@ -9,6 +9,10 @@ public class UnitSelection : MonoBehaviour
     public List<GameObject> groupSelect = new List<GameObject>();
 
     void Update(){
+        manualSelection();
+    }
+
+    void manualSelection(){
         if (UnitSelect == null) {
             if (Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift)) {
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
