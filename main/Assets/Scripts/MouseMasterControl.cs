@@ -7,36 +7,58 @@ public class MouseMasterControl : MonoBehaviour
     RaycastHit hit;
 
     // or ClickDragZone
-    public float clickZone = 1.3f;
+    public static float clickZone = 1.3f;
+    private Vector3 pointOfMouseClick;  // captures hit.point
+    private Vector2 pointOfMouseDrag;   // captures input.mousePoistion
+
+    // unit variables
     public static GameObject CurrentlySelectedUnit;
     public GameObject Target;
-
-    // point in 3D space
-    private Vector3 pointOfMouseClick;
-
     public static ArrayList CurrentlySelectedUnits = new ArrayList();
 
-    // time we're measuring when the mouse click is being held.
-    float holdTime = 0f;
-    // minimum value to be considered a hold
-    public static float minHoldTime = .3f;
-
+    // mouse hold specifications
+    public static float holdTimeReq = 1f; // TimeLimitBeforeDelcareDrag
+    public float mouseHoldTimer = 0.0f; // TimeLeftBeforeDeclareDrag;
+    public bool userIsDragging = false;
 
     void Awake () {
         pointOfMouseClick = Vector3.zero;
     }
     void Update () {
-        // Don't know if this method is more optimized than to scan after click. Revise later.
+        
+            // Don't know if this method is more optimized than to scan after click. Revise later.
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity)) {
             
             // storing point when clicked. for helper functions.
             if (Input.GetMouseButtonDown(0)) {
                 pointOfMouseClick = hit.point;
-                // Debug.Log("Clicked!");
+                pointOfMouseDrag = Input.mousePosition;
+
+                // this is a decrementing timer
+                mouseHoldTimer = holdTimeReq;
+            }
+            if (Input.GetMouseButton(0)) {
+                // Debug.Log(pointOfMouseClick + ":" + hit.point + ":" + clickZone);
+                if (!userIsDragging) {
+                    // Debug.Log("user is not dragging");
+                    mouseHoldTimer -= Time.deltaTime;
+                    if (mouseHoldTimer <= 0f || draggingByPos(pointOfMouseDrag, Input.mousePosition)) {
+                        userIsDragging = true;
+                    }
+                }
+                else if (userIsDragging) {
+                    Debug.Log("User is dragging: " + mouseHoldTimer);
+                }
+            }
+            if (Input.GetMouseButtonUp(0)) {
+                // Debug.Log("Button up");
+                mouseHoldTimer = 0f;
+                userIsDragging = false;
             }
 
             // To test location of click, uncomment below
             // Debug.Log(pointOfMouseClick);
+
 
             // Clicking on the terrain
             if (hit.collider.name == "Floor") {
@@ -51,12 +73,9 @@ public class MouseMasterControl : MonoBehaviour
                 // Keeps the groups if clicked on terrain with the shift key pressed
                 else if (Input.GetMouseButtonUp(0) && DidUserClickLeftMouse(pointOfMouseClick)){
                     if (!shiftKeysDown()) {
-                         DeselectGameObject();
+                        DeselectGameObject();
                     }
                 }
-
-                
-                
             }
 
             else {
@@ -109,11 +128,10 @@ public class MouseMasterControl : MonoBehaviour
                 }
             }
         }
-
-        checkMouseStatus();
     }
 
-    // Region Helper Function. Returns a validity check on our location of click
+    // This section is for manual selection //
+    // region Helper Function. Returns a validity check on our location of click
     public bool DidUserClickLeftMouse (Vector3 hitPoint) {
         if ((pointOfMouseClick.x < hitPoint.x + clickZone && pointOfMouseClick.x > hitPoint.x - clickZone) &&
             (pointOfMouseClick.y < hitPoint.y + clickZone && pointOfMouseClick.y > hitPoint.y - clickZone) &&
@@ -175,36 +193,17 @@ public class MouseMasterControl : MonoBehaviour
         }
     }
 
-    // Comparison between Click-hold start and end pos. 
-    // orig var name: UserDraggingByPosition
-    public bool checkDraggingByPosition (Vector2 startPoint, Vector2 newPoint) {
-        if (newPoint.x > startPoint.x + clickZone || newPoint.x < startPoint.x - clickZone ||
-            newPoint.y > startPoint.y + clickZone || newPoint.y < startPoint.y - clickZone) {
-            
+    // This section is for drag box //
+    // checking for mouse hold
+    public bool draggingByPos (Vector2 startpoint, Vector2 newPoint) {
+
+        // we're checking whether we should the magnitude of differences in mouse position is great enough to be considered as a box
+        if ((newPoint.x > startpoint.x + clickZone || newPoint.x < startpoint.x - clickZone) ||
+            (newPoint.y > startpoint.y + clickZone || newPoint.y < startpoint.y - clickZone)) {
             return true;
         }
         else {
             return false;
-        }
-    }
-
-    // Comparison between click and hold
-    public bool checkMouseStatus () {
-        if (Input.GetMouseButton(0)) {
-            holdTime += Time.deltaTime;
-            // Debug.Log(holdTime);
-        }
-
-        // stopwatch did not meet min time needed.
-        else if (Input.GetMouseButtonUp(0) && holdTime < minHoldTime) {
-            // Debug.Log("Click");
-            holdTime = 0f;
-            return false;
-        }
-        if (holdTime >= minHoldTime) {
-            // Debug.Log("Held! " + holdTime);
-            holdTime = 0f;
-            return true;
         }
     }
 }
