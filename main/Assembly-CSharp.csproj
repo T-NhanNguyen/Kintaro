@@ -47,6 +47,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Backup\MouseMasterControl.cs" />
      <Compile Include="Assets\Scripts\Backup\RescpMouseMC.cs" />
+     <Compile Include="Assets\Scripts\CameraControls.cs" />
      <Compile Include="Assets\Scripts\testingscripts.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>E:/git/Kintaro/main/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
