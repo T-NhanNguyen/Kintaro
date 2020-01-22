@@ -14,6 +14,12 @@ public class CameraControls : MonoBehaviour
 
     public Vector3 camAngle;
     private float camRotSpeed = 40f;
+    // units are in degrees
+    private float maxVertRot = 65f;
+    private float minVertRot = 0f;
+    private float maxHorRot = 20f;
+    private float mouseX;
+    private float mouseY;
 
     private float camZoom;
     private float maxZoomLimit = 20f;
@@ -23,11 +29,16 @@ public class CameraControls : MonoBehaviour
     void Update()
     {
         cameraPan();
-        cameraRotate();
+    }
+
+    void LateUpdate() {
+        handleMouseRotation();
+        mouseX = Input.mousePosition.x;
+        mouseY = Input.mousePosition.y;
     }
 
     public void cameraPan() {
-        camPos = transform.rotate;
+        camPos = transform.position;
 
         // Panning controls are available if not in rotating mode
         if(Input.GetKey("w") || (Input.mousePosition.y >= (Screen.height - panBorderThickness)) && !Input.GetMouseButton(2)) {
@@ -52,12 +63,25 @@ public class CameraControls : MonoBehaviour
 
         transform.position = camPos;
     }
-    public void cameraRotate() {
-        camAngle = transform.rotation;
-        if(Input.GetMouseButton(2)) {
-            camAngle.x += camRotSpeed * Input.GetAxis("Mouse X");
-            camAngle.y -= camRotSpeed * Input.GetAxis("Mouse y");
+
+    public void handleMouseRotation() {
+        var easeFactor = 10f;
+        if(Input.GetMouseButton(1) && Input.GetKey(KeyCode.LeftControl)) {
+
+            // if there's a change in the mouse, then this event will trigger
+            if(Input.mousePosition.x != mouseX){
+                var cameraRotationY = (Input.mousePosition.x - mouseX) * easeFactor * Time.deltaTime;
+                this.transform.Rotate(0, cameraRotationY, 0);
+            }
+            if(Input.mousePosition.y != mouseY) {
+                GameObject mainCamera = this.gameObject.transform.Find("Main Camera").gameObject;
+                var cameraRotationX = (mouseY - Input.mousePosition.y) * easeFactor * Time.deltaTime;
+                var desiredRotationX = mainCamera.transform.eulerAngles.x + cameraRotationX;
+
+                if(desiredRotationX >= minVertRot && desiredRotationX <= maxVertRot) {
+                    mainCamera.transform.Rotate(cameraRotationX, 0, 0);
+                }
+            }
         }
-        transform.eulerAngles = camAngle;
     }
 }
