@@ -3,15 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class testingscripts : MonoBehaviour {
-
-    // size of the array determines the maximum number of collateral results collected by these non-allocating methods. Eeach index of the array is the following object that's being hit . It will return an error if size == amount of objects to be collaterated
-    // must user loops to go through all hitResults.collider.name
-    // private static int rayCastIndexSize = 1;
-    // RaycastHit[] hitResults = new RaycastHit[rayCastIndexSize];
-    // (Physics.RaycastNonAlloc(Camera.main.ScreenPointToRay(Input.mousePosition), hitResults, Mathf.Infinity) != 0)
-
     RaycastHit hitResults;
-
 
     public static float clickZone = 1.3f;
     // private static Vector3 pointOfMouseClick;   // captures hitResults[0].point. Obsolete, only used in clickZoneRegister()

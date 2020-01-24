@@ -17,7 +17,6 @@ public class CameraControls : MonoBehaviour
     // units are in degrees
     private float maxVertRot = 65f;
     private float minVertRot = 0f;
-    private float maxHorRot = 20f;
     private float mouseX;
     private float mouseY;
 
@@ -68,19 +67,18 @@ public class CameraControls : MonoBehaviour
     }
 
     public void handleMouseRotation() {
-        var rotateSpeed = 10f;
 
         // set condition within cameraPan() to be !(middle mouse Click)
-        if(Input.GetMouseButton(1) && Input.GetKey(KeyCode.LeftControl)) {
+        if(Input.GetMouseButton(2) || Input.GetMouseButton(1) && Input.GetKey(KeyCode.LeftControl)) {
 
             // if there's a change in the mouse, then we can change the rotation by the differences of current pos and previous location.
             if(Input.mousePosition.x != mouseX){
-                var cameraRotationY = (Input.mousePosition.x - mouseX) * rotateSpeed * Time.deltaTime;
+                var cameraRotationY = (Input.mousePosition.x - mouseX) * camRotSpeed * Time.deltaTime;
                 this.transform.Rotate(0, cameraRotationY, 0);
             }
             if(Input.mousePosition.y != mouseY) {
                 GameObject mainCamera = this.gameObject.transform.Find("Main Camera").gameObject;
-                var cameraRotationX = (mouseY - Input.mousePosition.y) * rotateSpeed * Time.deltaTime;
+                var cameraRotationX = (mouseY - Input.mousePosition.y) * camRotSpeed * Time.deltaTime;
                 var desiredRotationX = mainCamera.transform.eulerAngles.x + cameraRotationX;
 
                 if(desiredRotationX >= minVertRot && desiredRotationX <= maxVertRot) {
