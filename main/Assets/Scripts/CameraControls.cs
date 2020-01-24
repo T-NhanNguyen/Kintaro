@@ -28,11 +28,14 @@ public class CameraControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        cameraPan();
+        
     }
 
     void LateUpdate() {
         handleMouseRotation();
+        cameraPan();
+
+        //handled in handleMouseRotation()
         mouseX = Input.mousePosition.x;
         mouseY = Input.mousePosition.y;
     }
@@ -56,7 +59,7 @@ public class CameraControls : MonoBehaviour
             camPos.x += panSpeed *Time.deltaTime;
         }
 
-        // Camera Zoom
+        // Camera Zoom opperation
         camZoom = Input.GetAxis("Mouse ScrollWheel");
         camPos.y -= camZoom * scrollSpeed * Time.deltaTime * 100f;
         camPos.y = Mathf.Clamp(camPos.y, minZoomLimit, maxZoomLimit);
@@ -65,17 +68,19 @@ public class CameraControls : MonoBehaviour
     }
 
     public void handleMouseRotation() {
-        var easeFactor = 10f;
+        var rotateSpeed = 10f;
+
+        // set condition within cameraPan() to be !(middle mouse Click)
         if(Input.GetMouseButton(1) && Input.GetKey(KeyCode.LeftControl)) {
 
-            // if there's a change in the mouse, then this event will trigger
+            // if there's a change in the mouse, then we can change the rotation by the differences of current pos and previous location.
             if(Input.mousePosition.x != mouseX){
-                var cameraRotationY = (Input.mousePosition.x - mouseX) * easeFactor * Time.deltaTime;
+                var cameraRotationY = (Input.mousePosition.x - mouseX) * rotateSpeed * Time.deltaTime;
                 this.transform.Rotate(0, cameraRotationY, 0);
             }
             if(Input.mousePosition.y != mouseY) {
                 GameObject mainCamera = this.gameObject.transform.Find("Main Camera").gameObject;
-                var cameraRotationX = (mouseY - Input.mousePosition.y) * easeFactor * Time.deltaTime;
+                var cameraRotationX = (mouseY - Input.mousePosition.y) * rotateSpeed * Time.deltaTime;
                 var desiredRotationX = mainCamera.transform.eulerAngles.x + cameraRotationX;
 
                 if(desiredRotationX >= minVertRot && desiredRotationX <= maxVertRot) {
