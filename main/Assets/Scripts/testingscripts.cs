@@ -49,6 +49,9 @@ public class testingscripts : MonoBehaviour {
 
                         currentlySelectedUnits.Add(hitResults.collider.gameObject);
                         hitResults.collider.transform.Find("Selected").gameObject.SetActive(true);
+
+                        // enabling units command script
+                        hitResults.collider.GetComponent<UnitProperties>().enabled = true; 
                     }
                     else {
                         removeUnitFromGroup(hitResults.collider.gameObject);
@@ -63,8 +66,10 @@ public class testingscripts : MonoBehaviour {
 
                     // but on valid objects with specified tag, we add it.
                     currentlySelectedUnits.Add(hitResults.collider.gameObject);
-                    GameObject selectedObject = hitResults.collider.transform.Find("Selected").gameObject;
-                    selectedObject.SetActive(true);
+                    GameObject activeMarker = hitResults.collider.transform.Find("Selected").gameObject;
+                    activeMarker.SetActive(true);
+
+                    hitResults.collider.GetComponent<UnitProperties>().enabled = true;            
                 }
             }
 
@@ -165,6 +170,9 @@ public class testingscripts : MonoBehaviour {
         for(int i = 0; i < currentlySelectedUnits.Count; i++) {
             GameObject temp = currentlySelectedUnits[i] as GameObject;
             temp.transform.Find("Selected").gameObject.SetActive(false);
+            
+            // turn on unit commands
+            temp.GetComponent<UnitProperties>().enabled = false;
         }
         currentlySelectedUnits.Clear();
     }
@@ -192,10 +200,12 @@ public class testingscripts : MonoBehaviour {
         if (currentlySelectedUnits.Count > 0) {
             for (int i = 0; i < currentlySelectedUnits.Count; i++){
                 GameObject temp = currentlySelectedUnits[i] as GameObject;
-                Debug.Log(unit, temp);
                 if (temp == unit) {
                     currentlySelectedUnits.RemoveAt(i);
                     temp.transform.Find("Selected").gameObject.SetActive(false);
+
+                    // turn on unit commands
+                    temp.GetComponent<UnitProperties>().enabled = false;
                 }
             }
         }
