@@ -1,8 +1,5 @@
 # Kintaro
-A unity game project for my love of video games.
-This project is solely for personal interests in wanting to make my own version of the game "Kenshi".
-
-Top priority is to learn C# and unity, second is to make progress on the game.
+This is a passionate project I've been wanting to take on for the last couple years, but never had to chance to. I'm in no rush to complete this game, I only intend to learn unity as I work on this project.
 
 # Task list:
-![Imgur-small](https://i.imgur.com/lRa1XO2.png)
+![Imgur-small](https://puu.sh/F3PdE/3fc305d08f.png)

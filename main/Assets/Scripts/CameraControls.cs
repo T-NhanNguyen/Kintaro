@@ -104,10 +104,10 @@ public class CameraControls : MonoBehaviour
 
             // Clamp camera zoom
             if(transform.position.y >= 20) {
-                transform.position = new Vector3(transform.position.x, 20, transform.position.z);
+                transform.position = new Vector3(transform.position.x, maxZoomLimit, transform.position.z);
             }
             if(transform.position.y <= 4) {
-                transform.position = new Vector3(transform.position.x, 4, transform.position.z);
+                transform.position = new Vector3(transform.position.x, minZoomLimit, transform.position.z);
             }
         }
     }

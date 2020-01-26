@@ -8,7 +8,6 @@ public class testingscripts : MonoBehaviour {
     public static float clickZone = 1.3f;
     // private static Vector3 pointOfMouseClick;   // captures hitResults[0].point. Obsolete, only used in clickZoneRegister()
     private static Vector3 pointOfMouseDrag;    // captures input.mousePosition
-    private static Vector3 currentMousePoint;   // everyframes will store a point of world space into here.
     private static Vector3 pointOfMouseDown;
 
     // Mnit variables
@@ -22,15 +21,14 @@ public class testingscripts : MonoBehaviour {
 
     // GUI variables
     public GUIStyle mouseDragSkin;
-    private float boxWidth;
-    private float boxHeight;
+    private float boxWidth, boxHeight;
     private float boxLeft, boxTop;
-    private Vector2 boxStart;
-    private Vector2 boxFinish;
+    private Vector2 boxStart, boxFinish;
     
+
     void Update() {
         mouseDragRegister();
-        
+
         if(Input.GetMouseButtonUp(0) && clickZoneRegister(pointOfMouseDrag)) {
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitResults, Mathf.Infinity) && (hitResults.collider.gameObject.CompareTag("Floor"))) {
                 if(!shiftKeysPressed()) {
@@ -80,29 +78,7 @@ public class testingscripts : MonoBehaviour {
                 }
             }
         }
-    }
-
-    // display the GUI
-    void OnGUI() {
-        // box width, height, top, left
-        if(userIsDragging) {
-            GUI.Box(new Rect(boxLeft, boxTop, boxWidth, boxHeight), "", mouseDragSkin);
-        }
-        
-    }
-
-    // Creates the dragbox
-    private void drawDragBox() {
-        boxWidth = Camera.main.WorldToScreenPoint(pointOfMouseDrag).x - Camera.main.WorldToScreenPoint(currentMousePoint).x;
-        boxHeight = Camera.main.WorldToScreenPoint(pointOfMouseDrag).y - Camera.main.WorldToScreenPoint(currentMousePoint).y;
-        boxLeft = Input.mousePosition.x;
-        // Debug.Log(boxWidth + " , " + boxHeight);
-        Debug.Log(Camera.main.WorldToScreenPoint(pointOfMouseDrag).x + " - " + Camera.main.WorldToScreenPoint(currentMousePoint).x + " = " + boxWidth);
-        //  inverting the axis for the space, so that the origin aligns between GUI and Screen
-        boxTop = (Screen.height - Input.mousePosition.y) - boxHeight;
-
-
-        boxFinish = new Vector2(boxStart.x + Mathf.Abs(boxWidth), boxStart.y - Mathf.Abs(boxHeight));
+        drawBox();
     }
 
     // Detecting whether this is a drag or a click
@@ -123,13 +99,11 @@ public class testingscripts : MonoBehaviour {
                 mouseHoldTimer += Time.deltaTime;
                 if(mouseHoldTimer >= holdTimeReq || dragByPosition(pointOfMouseDrag, Input.mousePosition)) {
                     userIsDragging = true;
-                    drawDragBox();
                 }
             }
             else if(userIsDragging) {
                 currentMousePoint = Input.mousePosition;
                 // Debug.Log("User is dragging, " + currentMousePoint);
-                drawDragBox();
                 // select unit in dragbox function
             }
         }
